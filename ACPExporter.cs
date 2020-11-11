@@ -91,6 +91,7 @@ namespace Occulwatcher.ACPExporter
                     //string eventInfo =
                     //    astEvent.AsteroidName + " occults " + astEvent.StarName + "; m = " + astEvent.StarMagnitude.ToString() + "; " + ((int)Math.Round(siteData.StarAltitude)).ToString() + "° " + GetStarDirection(userSettings, siteData.StarAzimuth) + "\r\n" +
                     //    siteData.EventTime.ToString("dd MMM; HH:mm:ss UT") + errorInTime + "; dur: " + maxDuration + "; drop: " + astEvent.MagnitudeDrop.ToString("#0.0") + "m;";
+
                     string eventInfo =
                         "#WaitUntil 1," + siteData.EventTime.ToString("dd/MM/yyyy HH:mm:ss") + " " + maxDuration + "\r\n" + astEvent.AsteroidName + "\t" + siteData.StarAltitude + "\t" + siteData.StarAzimuth;
 
