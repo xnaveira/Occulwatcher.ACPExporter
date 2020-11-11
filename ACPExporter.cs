@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,6 +67,8 @@ namespace Occulwatcher.ACPExporter
 
                     //TODO: Use the configured format string
 
+                    string ACPFilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ACPExport.acp";
+
                     string errorInTime = string.Empty;
                     if (evt2 != null &&
                         evt2.ErrorInTime != -1)
@@ -93,9 +96,13 @@ namespace Occulwatcher.ACPExporter
                     //    siteData.EventTime.ToString("dd MMM; HH:mm:ss UT") + errorInTime + "; dur: " + maxDuration + "; drop: " + astEvent.MagnitudeDrop.ToString("#0.0") + "m;";
 
                     string eventInfo =
-                        "#WaitUntil 1," + siteData.EventTime.ToString("dd/MM/yyyy HH:mm:ss") + " " + maxDuration + "\r\n" + astEvent.AsteroidName + "\t" + siteData.StarAltitude + "\t" + siteData.StarAzimuth;
+                        "#WaitUntil 1," + siteData.EventTime.ToString("dd/MM/yyyy HH:mm:ss") + " " + maxDuration + "\r\n" + astEvent.AsteroidName + "\t" + siteData.StarAltitude + "\t" + siteData.StarAzimuth + "\r\n";
 
                     Clipboard.SetText(eventInfo);
+                    using (StreamWriter writer = new StreamWriter(ACPFilePath, true))
+                    {
+                        writer.Write(eventInfo);
+                    }
 
                     MessageBox.Show(
                         owner,
