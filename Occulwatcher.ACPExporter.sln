@@ -8,9 +8,9 @@ EndProject
 Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "OccultWatcher", "bin\Debug\OccultWatcher.exe", "{A10EF2F7-A9AD-409E-85B7-579F8F4DE0D4}"
 	ProjectSection(DebuggerProjectSystem) = preProject
 		PortSupplier = 00000000-0000-0000-0000-000000000000
-		Executable = C:\Users\xaviern\Documents\OccultWatcher.SDK\Occulwatcher.ACPExporter\bin\Debug\OccultWatcher.exe
+		Executable = C:\Users\xaviern\source\repos\xnaveira\Occulwatcher.ACPExporter\bin\Debug\OccultWatcher.exe
 		RemoteMachine = WIN10
-		StartingDirectory = C:\Users\xaviern\Documents\OccultWatcher.SDK\Occulwatcher.ACPExporter\bin\Debug
+		StartingDirectory = C:\Users\xaviern\source\repos\xnaveira\Occulwatcher.ACPExporter\bin\Debug
 		Environment = Default
 		LaunchingEngine = 00000000-0000-0000-0000-000000000000
 		UseLegacyDebugEngines = No
