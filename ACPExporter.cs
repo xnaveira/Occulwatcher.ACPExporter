@@ -82,21 +82,21 @@ namespace Occulwatcher.ACPExporter
                             errorInTime = string.Format(" +/- {0} sec", evt2.ErrorInTime.ToString("#0"));
                     }
 
-                    string maxDuration = string.Empty;
-                    if (astEvent.MaxDuration > 90)
-                    {
-                        double dur = astEvent.MaxDuration / 60;
-                        maxDuration = string.Format("{0} min", dur.ToString("#0.0"));
-                    }
-                    else
-                        maxDuration = string.Format("{0} sec", astEvent.MaxDuration.ToString("#0"));
+                    //string maxDuration = string.Empty;
+                    //if (astEvent.MaxDuration > 90)
+                    //{
+                    //    double dur = astEvent.MaxDuration / 60;
+                    //    maxDuration = string.Format("{0} min", dur.ToString("#0.0"));
+                    //}
+                    //else
+                    //    maxDuration = string.Format("{0} sec", astEvent.MaxDuration.ToString("#0"));
 
                     //string eventInfo =
                     //    astEvent.AsteroidName + " occults " + astEvent.StarName + "; m = " + astEvent.StarMagnitude.ToString() + "; " + ((int)Math.Round(siteData.StarAltitude)).ToString() + "° " + GetStarDirection(userSettings, siteData.StarAzimuth) + "\r\n" +
                     //    siteData.EventTime.ToString("dd MMM; HH:mm:ss UT") + errorInTime + "; dur: " + maxDuration + "; drop: " + astEvent.MagnitudeDrop.ToString("#0.0") + "m;";
 
                     string eventInfo =
-                        "#WaitUntil 1," + siteData.EventTime.ToString("dd/MM/yyyy HH:mm:ss") + " " + maxDuration + "\r\n" + astEvent.AsteroidName + "\t" + siteData.StarAltitude + "\t" + siteData.StarAzimuth + "\r\n";
+                        "#WaitUntil 1," + siteData.EventTime.AddSeconds(Convert.ToInt32(astEvent.MaxDuration/2)).ToString("dd/MM/yyyy HH:mm:ss").Replace("-","/") + "\r\n" + astEvent.AsteroidName + "\t" + evt2.Occelmnt.StarRAHours.ToString().Replace(",",".") + "\t" + evt2.Occelmnt.StarDEDeg.ToString().Replace(",", ".") + "\r\n";
 
                     Clipboard.SetText(eventInfo);
                     using (StreamWriter writer = new StreamWriter(ACPFilePath, true))
