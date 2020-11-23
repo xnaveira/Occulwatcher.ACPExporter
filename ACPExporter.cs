@@ -1,4 +1,5 @@
 ﻿using OccultWatcher.SDK;
+using Occulwatcher.ACPExporter.Resources;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,11 +11,18 @@ using System.Windows.Forms;
 
 namespace Occulwatcher.ACPExporter
 {
+    public class ACPExporterConfig
+    {
+        public string ConfigFilePath { set; get; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ACPExport.txt";
+        public string ConfigHeader { set; get; } = "#Interval 60\r\n#Filter No Filter\r\n#Binning 2\r\n";
+
+    }
     public class ACPExporter : IOWAddin
     {
         private IOWHost m_HostInfo = null;
         private IOWResourceProvider m_ResourceProvider = null;
         public OWAddinAction[] ADDIN_ACTIONS = null;
+        private ACPExporterConfig config = new ACPExporterConfig();
 
         internal string GetResourceString(string resourceName, string defaultValue)
         {
@@ -26,7 +34,8 @@ namespace Occulwatcher.ACPExporter
         }
         public void Configure(System.Windows.Forms.IWin32Window owner)
         {
-            throw new NotImplementedException();
+            configDialog cd = new configDialog(config);
+            cd.ShowDialog(owner);
         }
 
         private string GetStarDirection(IOWUserConfig userSettings, double azimuth)
@@ -67,8 +76,6 @@ namespace Occulwatcher.ACPExporter
 
                     //TODO: Use the configured format string
 
-                    string ACPFilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ACPExport.acp";
-
                     string errorInTime = string.Empty;
                     if (evt2 != null &&
                         evt2.ErrorInTime != -1)
@@ -96,22 +103,48 @@ namespace Occulwatcher.ACPExporter
                     //    siteData.EventTime.ToString("dd MMM; HH:mm:ss UT") + errorInTime + "; dur: " + maxDuration + "; drop: " + astEvent.MagnitudeDrop.ToString("#0.0") + "m;";
 
                     string eventInfo =
-                        "#WaitUntil 1," + siteData.EventTime.AddSeconds(Convert.ToInt32(astEvent.MaxDuration/2)).ToString("dd/MM/yyyy HH:mm:ss").Replace("-","/") + "\r\n" + astEvent.AsteroidName + "\t" + evt2.Occelmnt.StarRAHours.ToString().Replace(",",".") + "\t" + evt2.Occelmnt.StarDEDeg.ToString().Replace(",", ".") + "\r\n";
+                        "#WaitUntil 1," + 
+                        siteData.EventTime.AddSeconds(Convert.ToInt32(astEvent.MaxDuration/2)).ToString("dd/MM/yyyy HH:mm:ss").Replace("-","/") + 
+                        "\r\n" + 
+                        astEvent.AsteroidName + 
+                        "\t" + 
+                        evt2.Occelmnt.StarRAHours.ToString().Replace(",",".") + 
+                        "\t" + 
+                        evt2.Occelmnt.StarDEDeg.ToString().Replace(",", ".") + 
+                        "\r\n";
 
                     Clipboard.SetText(eventInfo);
-                    using (StreamWriter writer = new StreamWriter(ACPFilePath, true))
+                    bool existed = false;
+                    if (File.Exists(config.ConfigFilePath))
                     {
+                        existed = true;
+                    }
+                        using (StreamWriter writer = new StreamWriter(config.ConfigFilePath, true))
+                    {
+                        if (!existed)
+                        {
+                            writer.Write(config.ConfigHeader);
+                        }
                         writer.Write(eventInfo);
                     }
 
                     MessageBox.Show(
                         owner,
-                        GetResourceString("OWAE.doneText", "The following info has been copied to the ACP file") + "\r\n\r\n" + eventInfo,
+                        GetResourceString("OWAE.doneText", "The following info has been copied to the ACP file") + 
+                            "\r\n\r\n" + 
+                            eventInfo + 
+                            "\r\n" + 
+                            config.ConfigFilePath,
                         GetResourceString("OWAE.AddinName", "ACP Exporter"),
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
                 }
             }
+
+            //if (actionId == 2)
+            //{
+            //    OWEventArguments args = eventArgs;
+            //}
 
             if (actionId == 7)
             {
@@ -145,6 +178,7 @@ namespace Occulwatcher.ACPExporter
             ADDIN_ACTIONS = new OWAddinAction[]
             {
                 new OWAddinAction(1, GetResourceString("OWAE.Action", "Export event to ACP"), OWAddinActionType.SelectedEventAction, Properties.Resources.ACPExporterIcon.ToBitmap()),
+                new OWAddinAction(2, GetResourceString("OWAE.Action", "Export event to ACP"), OWAddinActionType.EventReceiver, Properties.Resources.ACPExporterIcon.ToBitmap()),
                 new OWAddinAction(7, string.Empty, OWAddinActionType.ReportProcessor, null, Color.White)
             };
 
